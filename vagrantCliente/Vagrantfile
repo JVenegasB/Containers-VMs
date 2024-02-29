@@ -1,0 +1,21 @@
+
+Vagrant.configure("2") do |config|
+  #indicar imagen base que se va a utilizar
+  config.vm.box = "hashicorp/bionic64"
+
+  #no se mapea ningun puerto de la maquina virtual a la maquina host ya que estan en la misma red.
+  #configuraciones de la maquina virtual.
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = true
+    vb.memory = "1024"
+  end
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update #actualizar lista de paquetes
+    sudo apt-get install build-essential libssl-dev git -y #instalar herramientas necesarias para compilar wrk 
+    sudo apt-get install unzip -y #descomprimir archivos zip
+    git clone https://github.com/wg/wrk.git wrk #clonar el repositorio de git en la carpeta wrk
+    cd wrk 
+    sudo make #compilar wrk 
+    sudo cp wrk /usr/local/bin #permite ejecutar wrk desde cualquier directorio
+  SHELL
+end

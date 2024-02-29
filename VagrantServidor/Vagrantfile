@@ -1,0 +1,21 @@
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "hashicorp/bionic64"#indicar imagen base que se va a utilizar
+  config.vm.network "forwarded_port", guest: 80, host: 8080 #El puerto 80 de la máquina virtual se mapea al puerto 8080 de la maquina host. Se redigira lo que entre por el 8080 a la maquina virtual.
+  config.vm.network "private_network", ip: "192.168.33.10" #Asignar una IP privada a la máquina virtual
+
+  config.vm.provider "virtualbox" do |vb|#colocar configuraciones específicas para VirtualBox
+    vb.gui = true #habilitar GUI al iniciar el sistema
+    vb.memory = "1024" #asignar 1024 MB de memoria RAM
+  end
+  
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update #actualizar repositorios
+    sudo apt-get -y install nginx #instalar nginx en la máquina virtual
+    sudo service nginx start #iniciar el servicio de nginx
+    #comandos para permitir trafico por el puerto 80
+    sudo ufw enable #habilitar el firewall
+    sudo ufw allow 'Nginx HTTP
+  SHELL
+end
